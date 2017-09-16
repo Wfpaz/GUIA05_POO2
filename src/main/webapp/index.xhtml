@@ -12,9 +12,8 @@ and open the template in the editor.
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>GUIA05_POO2 ::: UDB</title>
+        <title>Corto01:::UDB</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        
         <!--Plugins Frameworks-->
         <h:outputScript library="js" name="jquery-3.1.0.min.js" />
         <h:outputStylesheet library="css" name="bootstrap.min.css"/>
@@ -26,7 +25,7 @@ and open the template in the editor.
         <h:outputScript library="js" name="custom/mens.js"/>
         <!--Plugins Tablas-->
         <h:outputStylesheet library="css" name="bootstrap-table.css" />
-        <h:outputStylesheet library="css" name="cusom/table.mini.css" />
+        <h:outputStylesheet library="css" name="custom/table.mini.css" />
         <h:outputScript library="js" name="bootstrap-table.js" />
         <h:outputScript library="js" name="bootstrap-table-es-AR.min.js" />
         <!--Plugins Confirmation [Eliminar]-->
@@ -36,41 +35,108 @@ and open the template in the editor.
         <h:outputScript library="js" name="custom/tipo.js"/>
     </h:head>
     <h:body>
-        <h:form id="formTest">
-            <div class="input-group input-group-xs">
-                <h:outputLabel  for="nomb" value="Nombre: "/>
-                <h:inputText id="nomb" class="form-control" value="#{tiposBean.objeTipo.nombTipo}"/>
-                <h:message for="nombs" errorClass="field-error" />
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h:panelGroup id="contTabl">
+                    <div id="barrBtns">
+                        <div class="btn-group btn-group-sm">
+                            <h:form id="toolBar">
+                                <p:remoteCommand name="consTipo" actionListener="#{tiposBean.cons()}"
+                                                 update="formTest"/>
+                                <p:remoteCommand name="elimTipo" actionListener="#{tiposBean.elim()}" update="contTabl formTest" 
+                                                         oncomplete="INIT_OBJE_TIPO()" global="true"/>
+                                <h:commandLink class="btn btn-success btn-sm" id="btonNuev">
+                                    <i class="fa fa-plus"/>
+                                    <p:ajax listener="#{tiposBean.nuev()}" update="formTest" global="true"/>
+                                    Agregar registro
+                                </h:commandLink>
+                            </h:form>
+                        </div>
+                    </div>
+                    <h:dataTable id="tablTipo" value="#{tiposBean.listTipo}"
+                                var="fila" class="boottable" pt:data-toolbar="#barrBtns"
+                                styleClass="table-hover table-bordered table-condensed table-striped table-responsive"
+                                pt:data-show-refresh="false" pt:data-show-toggle="false" pt:data-show-columns="false" 
+                                pt:data-search="true" pt:data-pagination="true" pt:data-page-list="[5, 10, 20, 50]"
+                                pt:data-click-to-select="true"  pt:data-select-item-name="radio"
+                                pt:data-single-select="true" columnClasses="col-md-1 col-md-11">
+                        <h:column pt:data-field="state" pt:data-checkbox="true">
+                        </h:column>
+                        <h:column pt:data-align="right" pt:data-sortable="true" pt:data-field="id" pt:data-visible="false">
+                            <f:facet name="header">Código</f:facet>
+                            <h:outputText value="#{fila.codiTipo}"/>
+                        </h:column>
+                        <h:column pt:data-sortable="true" pt:data-field="nomb">
+                            <f:facet name="header">Nombre</f:facet>
+                            <h:outputText value="#{fila.nombTipo}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
             </div>
-            <div class="input-group-btn right" style="padding-top: 5px;">
-                <div class="btn-group">
-                    <h:commandLink class="btn btn-success btn-xs" id="btonTest">
-                        <i class="fa fa-plus"/>
-                        <p:ajax listener="#{tiposBean.guar()}" process="@form" update="@form" global="true"/>
-                        Guardar
-                    </h:commandLink>                
-                </div>   
+        </div>
+        <div class="row">
+            <!-- Modal -->
+            <div class="modal fade" id="modaFormTipo" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <h:form id="formTest">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">X</button>
+                                <h4 class="modal-title">Mantenimiento de tipos</h4>
+                            </div>
+                            <div class="modal-body">
+                                <fieldset>
+                                    <div class="input-group input-group-xs">
+                                        <h:outputLabel  for="nomb" value="Nombre: "/>
+                                        <h:inputText id="nomb" class="form-control" value="#{tiposBean.objeTipo.nombTipo}" />
+                                        <h:message for="nomb" errorClass="badge badge-danger" />
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-group">
+                                    <ui:fragment rendered="#{tiposBean.guardando}">
+                                        <h:commandLink class="btn btn-success btn-sm" id="btonTest">
+                                            <i class="fa fa-plus"/>
+                                            <p:ajax listener="#{tiposBean.guar()}" process="@form" 
+                                                    update="@form :contTabl" oncomplete="INIT_OBJE_TIPO()" global="true"/>
+                                            Guardar
+                                        </h:commandLink>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{not tiposBean.guardando}">
+                                        <h:commandLink class="btn btn-primary btn-sm" id="btonEdit">
+                                            <i class="fa fa-edit"/>
+                                            <p:ajax listener="#{tiposBean.edit()}" process="@form" 
+                                                    update="@form :contTabl" oncomplete="INIT_OBJE_TIPO()" global="true"/>
+                                            Modificar
+                                        </h:commandLink>
+                                        <!--
+                                            # Para corregir el error que redirecciona hice una serie de pasos
+                                            1. Actualizar el bootstrap-confirmation, yo usé este: http://bootstrap-confirmation.js.org/
+                                            2. Quitar la referencia: bootstrap-confirmation.min.js del fragmento head.xhtml
+                                            3. Modifiqué el custom tipo.js(en este ejemplo) quitando la función y dejando todo en una sola línea
+                                            4. Y por último y lo mas importante que creo era lo único necesario al elemento h:outputLink le agregué el value="#"
+                                        -->
+                                        <h:outputLink id="btonElim" class="btn btn-danger btn-sm" value="#" pt:data-placement="left"
+                                                      pt:data-toggle="confirmation" pt:data-btn-ok-label="Sí" pt:data-btn-ok-icon="fa fa-trash-o"
+                                                      pt:data-btn-ok-class="btn-danger btn-xs" pt:data-btn-cancel-label="No" pt:data-btn-cancel-icon="fa fa-mail-forward"
+                                                      pt:data-btn-cancel-class="btn-default btn-xs" pt:data-title="¿Está seguro que desea eliminar?"
+                                                      pt:data-on-confirm="elimTipo"><!--data-on-confirm = nombre del comando remoto de eliminar (sin paréntesis)-->
+                                            <i class="fa fa-times"/> Eliminar
+                                        </h:outputLink>
+                                    </ui:fragment>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
             </div>
-        </h:form>
-        <div class="row col-md-12">
-            <h:dataTable id="tablTipo" value="#{tiposBean.listTipo}"
-                        var="fila" class="boottable" pt:data-toolbar="#toolbar"
-                        styleClass="table-hover table-bordered table-condensed table-striped table-responsive"
-                        pt:data-show-refresh="false" pt:data-show-toggle="false" pt:data-show-columns="false" 
-                        pt:data-search="true" pt:data-pagination="true" pt:data-page-list="[5, 10, 20, 50]"
-                        pt:data-click-to-select="true"  pt:data-select-item-name="radio"
-                        pt:data-single-select="true" columnClasses="col-md-1 col-md-11">
-                <h:column pt:data-field="state" pt:data-checkbox="true">
-                </h:column>
-                <h:column pt:data-align="right" pt:data-sortable="true" pt:data-field="id">
-                    <f:facet name="header">Código</f:facet>
-                    <h:outputText value="#{fila.codiTipo}"/>
-                </h:column>
-                <h:column pt:data-sortable="true" pt:data-field="nomb">
-                    <f:facet name="header">Nombre</f:facet>
-                    <h:outputText value="#{fila.nombTipo}"/>
-                </h:column>
-            </h:dataTable>
+        </div>
+        <div class="row"> 
+            <div class="col-md-offset-2">
+                <a href="libros.xhtml" class="btn btn-primary btn-sm">Libros</a>
+                <a href="prestamos.xhtml" class="btn btn-primary btn-sm">Prestamos</a>
+            </div>
         </div>
     </h:body>
 </html>

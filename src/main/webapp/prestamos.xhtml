@@ -31,8 +31,8 @@ and open the template in the editor.
         <!--Plugins Confirmation [Eliminar]-->
         <h:outputScript library="js" name="bootstrap-tooltip.js"/>
         <h:outputScript library="js" name="bootstrap-confirmation.js"/>
-        <!--Plugins para libros-->
-        <h:outputScript library="js" name="custom/libros.js"/>
+        <!--Plugins para tipos-->
+        <h:outputScript library="js" name="custom/prestamo.js"/>
     </h:head>
     <h:body>
         <div class="row">
@@ -41,19 +41,19 @@ and open the template in the editor.
                     <div id="barrBtns">
                         <div class="btn-group btn-group-sm">
                             <h:form id="toolBar">
-                                <p:remoteCommand name="consTipo" actionListener="#{librosBean.cons()}"
+                                <p:remoteCommand name="consTipo" actionListener="#{prestamosBean.cons()}"
                                                  update="formTest"/>
-                                <p:remoteCommand name="elimTipo" actionListener="#{librosBean.elim()}" update="contTabl formTest" 
+                                <p:remoteCommand name="elimTipo" actionListener="#{prestamosBean.elim()}" update="contTabl formTest" 
                                                          oncomplete="INIT_OBJE_TIPO()" global="true"/>
                                 <h:commandLink class="btn btn-success btn-sm" id="btonNuev">
                                     <i class="fa fa-plus"/>
-                                    <p:ajax listener="#{librosBean.nuev()}" update="formTest" global="true"/>
+                                    <p:ajax listener="#{prestamosBean.nuev()}" update="formTest" global="true"/>
                                     Agregar registro
                                 </h:commandLink>
                             </h:form>
                         </div>
                     </div>
-                    <h:dataTable id="tablTipo" value="#{librosBean.listLibro}"
+                    <h:dataTable id="tablTipo" value="#{prestamosBean.listTipo}"
                                 var="fila" class="boottable" pt:data-toolbar="#barrBtns"
                                 styleClass="table-hover table-bordered table-condensed table-striped table-responsive"
                                 pt:data-show-refresh="false" pt:data-show-toggle="false" pt:data-show-columns="false" 
@@ -64,27 +64,23 @@ and open the template in the editor.
                         </h:column>
                         <h:column pt:data-align="right" pt:data-sortable="true" pt:data-field="id" pt:data-visible="false">
                             <f:facet name="header">Código</f:facet>
-                            <h:outputText value="#{fila.codiLibr}"/>
+                            <h:outputText value="#{fila.codiPres}"/>
                         </h:column>
                         <h:column pt:data-sortable="true" pt:data-field="nomb">
                             <f:facet name="header">Nombre</f:facet>
-                            <h:outputText value="#{fila.nombLibr}"/>
+                            <h:outputText value="#{fila.codiLibr.nombLibr}"/>
                         </h:column>
-                        <h:column pt:data-sortable="true" pt:data-field="autor">
-                            <f:facet name="header">Autor</f:facet>
-                            <h:outputText value="#{fila.autoLibr}"/>
+                        <h:column pt:data-sortable="true" pt:data-field="nomb">
+                            <f:facet name="header">Nombre</f:facet>
+                            <h:outputText value="#{fila.codiUsua.nombUsua}"/>
                         </h:column>
-                        <h:column pt:data-sortable="true" pt:data-field="gene">
-                            <f:facet name="header">Genero</f:facet>
-                            <h:outputText value="#{fila.geneLibr}"/>
+                        <h:column pt:data-sortable="true" pt:data-field="nomb">
+                            <f:facet name="header">Nombre</f:facet>
+                            <h:outputText value="#{fila.fechPres}"/>
                         </h:column>
-                        <h:column pt:data-sortable="true" pt:data-field="año">
-                            <f:facet name="header">Año</f:facet>
-                            <h:outputText value="#{fila.anioLibr}"/>
-                        </h:column>
-                        <h:column pt:data-sortable="true" pt:data-field="esta">
-                            <f:facet name="header">Estado</f:facet>
-                            <h:outputText value="#{fila.estaLibr}"/>
+                        <h:column pt:data-sortable="true" pt:data-field="nomb">
+                            <f:facet name="header">Nombre</f:facet>
+                            <h:outputText value="#{fila.fechDevo}"/>
                         </h:column>
                     </h:dataTable>
                 </h:panelGroup>
@@ -98,51 +94,44 @@ and open the template in the editor.
                         <h:form id="formTest">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">X</button>
-                                <h4 class="modal-title">Mantenimiento de Libros</h4>
+                                <h4 class="modal-title">Mantenimiento de tipos</h4>
                             </div>
                             <div class="modal-body">
                                 <fieldset>
                                     <div class="input-group input-group-xs">
-                                        <h:outputLabel  for="nomb" value="Nombre: "/>
-                                        <h:inputText id="nomb" class="form-control" value="#{librosBean.objeLibro.nombLibr}" />
-                                        <h:message for="nomb" errorClass="badge badge-danger" />
+                                        <h:outputLabel  for="libro" value="Libro "/>
+                                        <h:selectOneMenu id="libro" class="form-control" value="#{prestamosBean.objeTipo.codiLibr}">
+                                            <f:selectItems value="#{librosBean.listLibro}" var="temp" 
+                                                           itemLabel="#{temp.nombLibr}" itemValue="#{temp}"/>
+                                            <f:converter converterId="PooConv"/>
+                                        </h:selectOneMenu>
+                                        <h:message for="libro" errorClass="badge badge-danger" />
                                     </div>
                                     <div class="input-group input-group-xs">
-                                        <h:outputLabel  for="autor" value="Autor: "/>
-                                        <h:inputText id="autor" class="form-control" value="#{librosBean.objeLibro.autoLibr}" />
-                                        <h:message for="autor" errorClass="badge badge-danger" />
-                                    </div>
-                                    <div class="input-group input-group-xs">
-                                        <h:outputLabel  for="gene" value="Genero: "/>
-                                        <h:inputText id="gene" class="form-control" value="#{librosBean.objeLibro.geneLibr}" />
-                                        <h:message for="gene" errorClass="badge badge-danger" />
-                                    </div>
-                                    <div class="input-group input-group-xs">
-                                        <h:outputLabel  for="anio" value="Año: "/>
-                                        <h:inputText id="anio" class="form-control" value="#{librosBean.objeLibro.anioLibr}" />
-                                        <h:message for="anio" errorClass="badge badge-danger" />
-                                    </div>
-                                    <div class="input-group input-group-xs">
-                                        <h:outputLabel  for="esta" value="Estado: "/>
-                                        <h:inputText id="esta" class="form-control" value="#{librosBean.objeLibro.estaLibr}" />
-                                        <h:message for="esta" errorClass="badge badge-danger" />
+                                        <h:outputLabel  for="usua" value="Usuario "/>
+                                        <h:selectOneMenu id="usua" class="form-control" value="#{prestamosBean.objeTipo.codiUsua}">
+                                            <f:selectItems value="#{usuariosBean.listTipo}" var="temp" 
+                                                           itemLabel="#{temp.nombUsua}" itemValue="#{temp}"/>
+                                            <f:converter converterId="PooConv"/>
+                                        </h:selectOneMenu>
+                                        <h:message for="usua" errorClass="badge badge-danger" />
                                     </div>
                                 </fieldset>
                             </div>
                             <div class="modal-footer">
                                 <div class="btn-group">
-                                    <ui:fragment rendered="#{librosBean.guardando}">
+                                    <ui:fragment rendered="#{prestamosBean.guardando}">
                                         <h:commandLink class="btn btn-success btn-sm" id="btonTest">
                                             <i class="fa fa-plus"/>
-                                            <p:ajax listener="#{librosBean.guar()}" process="@form" 
+                                            <p:ajax listener="#{prestamosBean.guar()}" process="@form" 
                                                     update="@form :contTabl" oncomplete="INIT_OBJE_TIPO()" global="true"/>
                                             Guardar
                                         </h:commandLink>
                                     </ui:fragment>
-                                    <ui:fragment rendered="#{not librosBean.guardando}">
+                                    <ui:fragment rendered="#{not prestamosBean.guardando}">
                                         <h:commandLink class="btn btn-primary btn-sm" id="btonEdit">
                                             <i class="fa fa-edit"/>
-                                            <p:ajax listener="#{librosBean.edit()}" process="@form" 
+                                            <p:ajax listener="#{prestamosBean.edit()}" process="@form" 
                                                     update="@form :contTabl" oncomplete="INIT_OBJE_TIPO()" global="true"/>
                                             Modificar
                                         </h:commandLink>
@@ -150,7 +139,7 @@ and open the template in the editor.
                                             # Para corregir el error que redirecciona hice una serie de pasos
                                             1. Actualizar el bootstrap-confirmation, yo usé este: http://bootstrap-confirmation.js.org/
                                             2. Quitar la referencia: bootstrap-confirmation.min.js del fragmento head.xhtml
-                                            3. Modifiqué el custom libros.js(en este ejemplo) quitando la función y dejando todo en una sola línea
+                                            3. Modifiqué el custom tipo.js(en este ejemplo) quitando la función y dejando todo en una sola línea
                                             4. Y por último y lo mas importante que creo era lo único necesario al elemento h:outputLink le agregué el value="#"
                                         -->
                                         <h:outputLink id="btonElim" class="btn btn-danger btn-sm" value="#" pt:data-placement="left"
@@ -170,7 +159,7 @@ and open the template in the editor.
         </div>
         <div class="row"> 
             <div class="col-md-offset-2">
-                <a href="index.xhtml" class="btn btn-primary btn-sm">Home</a>
+                <a href="libros.xhtml" class="btn btn-primary btn-sm">Libros</a>
                 <a href="prestamos.xhtml" class="btn btn-primary btn-sm">Prestamos</a>
             </div>
         </div>

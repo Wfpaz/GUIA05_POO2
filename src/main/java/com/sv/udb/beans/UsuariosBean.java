@@ -5,8 +5,8 @@
  */
 package com.sv.udb.beans;
 
-import com.sv.udb.controladores.TiposFacadeLocal;
-import com.sv.udb.modelos.Tipos;
+import com.sv.udb.controladores.UsuariosFacadeLocal;
+import com.sv.udb.modelos.Usuarios;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -19,53 +19,52 @@ import org.primefaces.context.RequestContext;
 
 /**
  *
- * @author JMagoSV
+ * @author walte
  */
-@Named(value = "tiposBean")
+@Named(value = "usuariosBean")
 @ViewScoped
-public class TiposBean implements Serializable{
+public class UsuariosBean implements Serializable{
 
     @EJB
-    private TiposFacadeLocal tiposFacade;
-    
+    private UsuariosFacadeLocal usuariosFacade;
+
     private boolean guardando;
-    private Tipos objeTipo;
-    private List<Tipos> listTipo;
+    private Usuarios objeTipo;
+    private List<Usuarios> listTipo;
     
     /**
-     * Creates a new instance of TiposBean
+     * Creates a new instance of UsuariosBean
      */
-    public TiposBean() {
+    public UsuariosBean() {
     }
 
     public boolean isGuardando() {
         return guardando;
     }
 
-    public Tipos getObjeTipo() {
+    public Usuarios getObjeTipo() {
         return objeTipo;
     }
 
-    public void setObjeTipo(Tipos objeTipo) {
+    public void setObjeTipo(Usuarios objeTipo) {
         this.objeTipo = objeTipo;
     }
 
-    public List<Tipos> getListTipo() {
+    public List<Usuarios> getListTipo() {
         return listTipo;
     }
-    
     //Se ejecuta despues de que la página carga
     @PostConstruct
     public void init()
     {
-        this.objeTipo = new Tipos();
-        this.listTipo = this.tiposFacade.findAll();
+        this.objeTipo = new Usuarios();
+        this.listTipo = this.usuariosFacade.findAll();
     }
     
     public void nuev()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
-        this.objeTipo = new Tipos();
+        this.objeTipo = new Usuarios();
         this.guardando = true;
         ctx.execute("$('#modaFormTipo').modal('show')");
     }
@@ -74,8 +73,8 @@ public class TiposBean implements Serializable{
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         Map<String, String> mapaPrms = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        int codi = Integer.parseInt(mapaPrms.get("codiTipo"));
-        this.objeTipo = this.tiposFacade.find(codi);
+        int codi = Integer.parseInt(mapaPrms.get("codiUsua"));
+        this.objeTipo = this.usuariosFacade.find(codi);
         this.guardando = false;
         ctx.execute("$('#modaFormTipo').modal('show')");
     }
@@ -85,9 +84,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.create(this.objeTipo);
+            this.usuariosFacade.create(this.objeTipo);
             this.listTipo.add(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.objeTipo = new Usuarios();
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
         }
         catch(Exception ex)
@@ -106,9 +105,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.edit(this.objeTipo);
+            this.usuariosFacade.edit(this.objeTipo);
             this.setItem(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.objeTipo = new Usuarios();
             this.guardando = true;
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos modificados')");
         }
@@ -127,9 +126,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.remove(this.objeTipo);
+            this.usuariosFacade.remove(this.objeTipo);
             this.listTipo.remove(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.objeTipo = new Usuarios();
             this.guardando = true;
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos eliminados')");
         }
@@ -143,7 +142,7 @@ public class TiposBean implements Serializable{
         }
     }
     
-    private void setItem(Tipos item)
+    private void setItem(Usuarios item)
     {
         int itemIndex = this.listTipo.indexOf(item);
             if (itemIndex != -1) {

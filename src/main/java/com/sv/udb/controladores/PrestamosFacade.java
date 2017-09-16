@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class PrestamosFacade extends AbstractFacade<Prestamos> implements PrestamosFacadeLocal {
 
-    @PersistenceContext(unitName = "POOPU")
+    @PersistenceContext(unitName = "Poopu")
     private EntityManager em;
 
     @Override

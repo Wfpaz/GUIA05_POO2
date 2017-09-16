@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class PermisosUsuariosFacade extends AbstractFacade<PermisosUsuarios> implements PermisosUsuariosFacadeLocal {
 
-    @PersistenceContext(unitName = "POOPU")
+    @PersistenceContext(unitName = "Poopu")
     private EntityManager em;
 
     @Override

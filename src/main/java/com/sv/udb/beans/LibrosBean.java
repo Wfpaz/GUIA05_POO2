@@ -5,8 +5,8 @@
  */
 package com.sv.udb.beans;
 
-import com.sv.udb.controladores.TiposFacadeLocal;
-import com.sv.udb.modelos.Tipos;
+import com.sv.udb.modelos.Libros;
+import com.sv.udb.controladores.LibrosFacadeLocal;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -19,53 +19,53 @@ import org.primefaces.context.RequestContext;
 
 /**
  *
- * @author JMagoSV
+ * @author walte
  */
-@Named(value = "tiposBean")
+@Named(value = "librosBean")
 @ViewScoped
-public class TiposBean implements Serializable{
+public class LibrosBean implements Serializable {
 
     @EJB
-    private TiposFacadeLocal tiposFacade;
+    private LibrosFacadeLocal librosFacade;    
     
     private boolean guardando;
-    private Tipos objeTipo;
-    private List<Tipos> listTipo;
+    private Libros objeLibro;
+    private List<Libros> listLibro;
     
     /**
-     * Creates a new instance of TiposBean
+     * Creates a new instance of LibrosBean
      */
-    public TiposBean() {
+    public LibrosBean() {
     }
 
     public boolean isGuardando() {
         return guardando;
     }
 
-    public Tipos getObjeTipo() {
-        return objeTipo;
+    public Libros getObjeLibro() {
+        return objeLibro;
     }
 
-    public void setObjeTipo(Tipos objeTipo) {
-        this.objeTipo = objeTipo;
+    public void setObjeLibro(Libros objeLibro) {
+        this.objeLibro = objeLibro;
     }
 
-    public List<Tipos> getListTipo() {
-        return listTipo;
+    public List<Libros> getListLibro() {
+        return listLibro;
     }
     
     //Se ejecuta despues de que la página carga
     @PostConstruct
     public void init()
     {
-        this.objeTipo = new Tipos();
-        this.listTipo = this.tiposFacade.findAll();
+        this.objeLibro = new Libros();
+        this.listLibro = this.librosFacade.findAll();
     }
     
     public void nuev()
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
-        this.objeTipo = new Tipos();
+        this.objeLibro = new Libros();
         this.guardando = true;
         ctx.execute("$('#modaFormTipo').modal('show')");
     }
@@ -74,8 +74,8 @@ public class TiposBean implements Serializable{
     {
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         Map<String, String> mapaPrms = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        int codi = Integer.parseInt(mapaPrms.get("codiTipo"));
-        this.objeTipo = this.tiposFacade.find(codi);
+        int codi = Integer.parseInt(mapaPrms.get("id"));
+        this.objeLibro = this.librosFacade.find(codi);
         this.guardando = false;
         ctx.execute("$('#modaFormTipo').modal('show')");
     }
@@ -85,9 +85,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.create(this.objeTipo);
-            this.listTipo.add(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.librosFacade.create(this.objeLibro);
+            this.listLibro.add(this.objeLibro);
+            this.objeLibro = new Libros();
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos guardados')");
         }
         catch(Exception ex)
@@ -106,9 +106,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.edit(this.objeTipo);
-            this.setItem(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.librosFacade.edit(this.objeLibro);
+            this.setItem(this.objeLibro);
+            this.objeLibro = new Libros();
             this.guardando = true;
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos modificados')");
         }
@@ -127,9 +127,9 @@ public class TiposBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.tiposFacade.remove(this.objeTipo);
-            this.listTipo.remove(this.objeTipo);
-            this.objeTipo = new Tipos();
+            this.librosFacade.remove(this.objeLibro);
+            this.listLibro.remove(this.objeLibro);
+            this.objeLibro = new Libros();
             this.guardando = true;
             ctx.execute("setMessage('MESS_SUCC', 'Atención', 'Datos eliminados')");
         }
@@ -143,11 +143,11 @@ public class TiposBean implements Serializable{
         }
     }
     
-    private void setItem(Tipos item)
+    private void setItem(Libros item)
     {
-        int itemIndex = this.listTipo.indexOf(item);
+        int itemIndex = this.listLibro.indexOf(item);
             if (itemIndex != -1) {
-            this.listTipo.set(itemIndex, item);
+            this.listLibro.set(itemIndex, item);
         }
     }
 }
