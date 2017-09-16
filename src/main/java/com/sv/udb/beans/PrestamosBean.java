@@ -8,6 +8,7 @@ package com.sv.udb.beans;
 import com.sv.udb.controladores.PrestamosFacadeLocal;
 import com.sv.udb.modelos.Prestamos;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,9 @@ public class PrestamosBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
+            Date ahora = new Date();
+            SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+            this.objeTipo.setFechDevo(ahora);
             this.prestamosFacade.create(this.objeTipo);
             this.listTipo.add(this.objeTipo);
             this.objeTipo = new Prestamos();
@@ -108,7 +112,9 @@ public class PrestamosBean implements Serializable{
         RequestContext ctx = RequestContext.getCurrentInstance(); //Capturo el contexto de la página
         try
         {
-            this.objeTipo.setFechDevo();
+            Date ahora = new Date();
+            SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+            this.objeTipo.setFechDevo(ahora);
             this.prestamosFacade.edit(this.objeTipo);
             this.setItem(this.objeTipo);
             this.objeTipo = new Prestamos();
